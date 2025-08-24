@@ -10,7 +10,7 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ec7209;
             min-height: 100vh;
             color: #333;
         }
@@ -57,28 +57,63 @@
             background: #f8f9fa;
         }
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .input-with-unit {
+            position: relative;
+        }
+
+        .input-with-unit input {
+            padding-right: 30px;
+        }
+
+        .input-with-unit .unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .input-with-percent {
+            position: relative;
+        }
+
+        .input-with-percent input {
+            padding-right: 30px;
+        }
+
+        .input-with-percent .unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
         }
 
         .result-input {
-            background: #d4edda !important;
-            border-color: #28a745 !important;
+            background: #e3f2fd !important;
+            border-color: #2196f3 !important;
             font-weight: 600;
-            color: #155724;
+            color: #0d47a1;
             cursor: not-allowed;
         }
 
+        .salary-net {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+        }
+
         .info-box {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #184c9a;
             color: white;
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 25px;
-            box-shadow: 0 10px 25px rgba(240, 147, 251, 0.3);
+            box-shadow: 0 10px 25px rgba(24, 76, 154, 0.3);
         }
 
         .info-box h3 {
@@ -141,13 +176,13 @@
 
             <div class="input-group">
                 <label for="netSalary">Salaire employé NET (sans charges) ($)</label>
-                <input type="number" id="netSalary" class="result-input" readonly placeholder="Calculé automatiquement">
+                <input type="number" id="netSalary" class="result-input salary-net" readonly placeholder="Calculé automatiquement">
             </div>
         </div>
 
         <div class="charges-info">
-            <strong>ℹ️ Information sur les charges sociales :</strong><br>
-            Le taux de 24,03% représente les charges sociales que l'employeur paie en plus du salaire de base (RRQ, assurance-emploi, RQAP, CNESST, etc.).
+            <strong>Information sur les charges sociales :</strong><br>
+            Le taux de 24,03% représente les charges sociales que l'employeur paie en plus du salaire de base (RRQ, assurance-emploi, CNESST, etc.).
         </div>
     </div>
 
