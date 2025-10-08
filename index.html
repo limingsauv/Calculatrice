@@ -84,10 +84,16 @@
             cursor: not-allowed;
         }
 
-        /* Style spécifique pour le salaire NET */
         #netSalary {
-            font-weight: bold !important;             /* texte en gras */
-            background-color: #b2ffb2 !important;    /* fond vert clair */
+            font-weight: bold !important;
+            background-color: #b2ffb2 !important;
+            border-color: #28a745 !important;
+            color: #155724 !important;
+        }
+
+        #adjustedNetSalary {
+            font-weight: bold !important;
+            background-color: #b2ffb2 !important;
             border-color: #28a745 !important;
             color: #155724 !important;
         }
@@ -199,6 +205,26 @@
             box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
         }
 
+        .adjustment-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .adjustment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
         .collapsible-content {
             display: none;
             margin-top: 20px;
@@ -272,6 +298,18 @@
 
         .tarif-table td {
             font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box strong {
+            color: #856404;
         }
 
         @media (max-width: 768px) {
@@ -511,34 +549,214 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- NOUVELLE SECTION : Ajustement salarial -->
+        <button class="adjustment-btn" id="adjustmentBtn">Ajustement salarial (changement de tarif) ▼</button>
+        <div class="collapsible-content" id="adjustmentContent">
+            <h2>Ajustement salarial selon changement de tarif</h2>
+            
+            <div class="highlight-box">
+                <strong>Clause contractuelle :</strong><br>
+                "La rémunération doit être ajustée lorsque les tarifs changent aux mêmes pourcentages de la part de l'employé (en incluant les 24,03% d'avantages sociaux) sur le montant payé par le patient."
+            </div>
+
+            <div class="calculator-grid">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="oldRate">Ancien tarif client ($)</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="oldRate" placeholder="Ex: 80" step="0.01" min="0">
+                            <span class="unit">$</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="newRate">Nouveau tarif client ($)</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="newRate" placeholder="Ex: 90" step="0.01" min="0">
+                            <span class="unit">$</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="currentNetSalary">Salaire NET actuel (sans charges) ($)</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="currentNetSalary" placeholder="Ex: 38.4" step="0.01" min="0">
+                        <span class="unit">$</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="rateChangePercent">Pourcentage de changement de tarif (%)</label>
+                    <div class="input-with-percent">
+                        <input type="number" id="rateChangePercent" class="result-input" readonly placeholder="Calculé automatiquement">
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="adjustedNetSalary">Nouveau salaire NET (sans charges) ($)</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="adjustedNetSalary" class="result-input" readonly placeholder="Calculé automatiquement">
+                        <span class="unit">$</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="adjustedTotalSalary">Nouveau salaire TOTAL (avec charges 24,03%) - Ce que l'employeur paie ($)</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="adjustedTotalSalary" class="result-input" readonly placeholder="Calculé automatiquement">
+                        <span class="unit">$</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOUVELLE SECTION : Explication ajustement salarial -->
+        <button class="adjustment-btn" id="adjustmentExplanationBtn">Explication de l'ajustement salarial ▼</button>
+        <div class="collapsible-content" id="adjustmentExplanationContent">
+            <h2>Explication du calcul d'ajustement salarial</h2>
+
+            <div class="step">
+                <h4>Principe de la clause contractuelle</h4>
+                <p>Lorsque les tarifs changent, le salaire de l'employé doit être ajusté proportionnellement au changement de tarif. Le pourcentage d'augmentation (ou de diminution) du tarif s'applique au salaire total de l'employé (qui inclut les 24,03% de charges sociales).</p>
+            </div>
+
+            <div class="step">
+                <h4>Étape 1 : Calcul du pourcentage de changement de tarif</h4>
+                <p>On calcule d'abord le pourcentage de variation entre l'ancien et le nouveau tarif.</p>
+                <div class="formula">
+                    Pourcentage de changement = ((Nouveau tarif - Ancien tarif) ÷ Ancien tarif) × 100
+                </div>
+                <div class="example">
+                    <strong>Exemple :</strong><br>
+                    Ancien tarif : 80,00$<br>
+                    Nouveau tarif : 90,00$<br>
+                    Pourcentage = ((90,00 - 80,00) ÷ 80,00) × 100<br>
+                    Pourcentage = (10,00 ÷ 80,00) × 100<br>
+                    Pourcentage = 0,125 × 100 = <strong>12,50%</strong>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Étape 2 : Calcul du salaire total actuel (avec charges)</h4>
+                <p>À partir du salaire NET actuel (sans charges), on calcule le salaire TOTAL qui inclut les charges sociales de 24,03%.</p>
+                <div class="formula">
+                    Salaire TOTAL actuel = Salaire NET actuel × (1 + 24,03%)
+                </div>
+                <div class="formula">
+                    Salaire TOTAL actuel = Salaire NET actuel × 1,2403
+                </div>
+                <div class="example">
+                    <strong>Exemple :</strong><br>
+                    Salaire NET actuel : 38,40$<br>
+                    Salaire TOTAL actuel = 38,40$ × 1,2403 = <strong>47,63$</strong>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Étape 3 : Application du pourcentage d'augmentation au salaire total</h4>
+                <p>On applique le même pourcentage d'augmentation que celui du tarif au salaire TOTAL de l'employé.</p>
+                <div class="formula">
+                    Nouveau salaire TOTAL = Salaire TOTAL actuel × (1 + Pourcentage de changement ÷ 100)
+                </div>
+                <div class="example">
+                    <strong>Exemple :</strong><br>
+                    Salaire TOTAL actuel : 47,63$<br>
+                    Pourcentage de changement : 12,50%<br>
+                    Nouveau salaire TOTAL = 47,63$ × (1 + 12,50 ÷ 100)<br>
+                    Nouveau salaire TOTAL = 47,63$ × 1,1250 = <strong>53,58$</strong>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Étape 4 : Calcul du nouveau salaire NET (sans charges)</h4>
+                <p>Enfin, on retire les charges sociales pour obtenir le nouveau salaire NET que recevra l'employé.</p>
+                <div class="formula">
+                    Nouveau salaire NET = Nouveau salaire TOTAL ÷ (1 + 24,03%)
+                </div>
+                <div class="formula">
+                    Nouveau salaire NET = Nouveau salaire TOTAL ÷ 1,2403
+                </div>
+                <div class="example">
+                    <strong>Exemple :</strong><br>
+                    Nouveau salaire TOTAL : 53,58$<br>
+                    Nouveau salaire NET = 53,58$ ÷ 1,2403 = <strong>43,20$</strong>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Résumé de l'exemple complet</h4>
+                <div class="example">
+                    <strong>Situation :</strong><br>
+                    • Ancien tarif client : 80,00$<br>
+                    • Nouveau tarif client : 90,00$<br>
+                    • Salaire NET actuel : 38,40$<br>
+                    <br>
+                    <strong>Résultats :</strong><br>
+                    • Augmentation du tarif : +12,50%<br>
+                    • Nouveau salaire NET : 43,20$ (soit une augmentation de 4,80$)<br>
+                    • Nouveau salaire TOTAL (ce que l'employeur paie) : 53,58$<br>
+                    • Augmentation du salaire NET : +12,50% (même pourcentage que le tarif)
+                </div>
+            </div>
+
+            <div class="charges-info">
+                <strong>Note importante :</strong><br>
+                Cette méthode garantit que l'employé bénéficie exactement du même pourcentage d'augmentation que l'augmentation du tarif, conformément à la clause contractuelle. Les charges sociales de 24,03% sont prises en compte dans le calcul pour assurer l'équité.
+            </div>
+        </div>
     </div>
 
     <script>
         const CHARGES_RATE = 0.2403; // 24,03%
 
+        // Calculatrice principale
         function calculateValues() {
             const clientAmount = parseFloat(document.getElementById('clientAmount').value) || 0;
             const profitPercent = parseFloat(document.getElementById('profitPercent').value) || 0;
 
-            // Calcul du pourcentage lié au salaire total
             const salaryPercent = 100 - profitPercent;
-
-            // Calcul du profit de la clinique
             const clinicProfit = clientAmount * (profitPercent / 100);
-            
-            // Calcul du salaire total (avec charges)
             const totalSalary = clientAmount - clinicProfit;
-            
-            // Calcul du salaire net (sans charges)
             const netSalary = totalSalary / (1 + CHARGES_RATE);
 
-            // Mise à jour des champs
             document.getElementById('salaryPercent').value = salaryPercent.toFixed(2);
             document.getElementById('clinicProfit').value = clinicProfit.toFixed(2);
             document.getElementById('totalSalary').value = totalSalary.toFixed(2);
             document.getElementById('netSalary').value = netSalary.toFixed(2);
         }
 
+        // Calculatrice d'ajustement salarial
+        function calculateAdjustment() {
+            const oldRate = parseFloat(document.getElementById('oldRate').value) || 0;
+            const newRate = parseFloat(document.getElementById('newRate').value) || 0;
+            const currentNetSalary = parseFloat(document.getElementById('currentNetSalary').value) || 0;
+
+            if (oldRate === 0) {
+                document.getElementById('rateChangePercent').value = '';
+                document.getElementById('adjustedNetSalary').value = '';
+                return;
+            }
+
+            // Calcul du pourcentage de changement
+            const rateChangePercent = ((newRate - oldRate) / oldRate) * 100;
+
+            // Calcul du salaire total actuel (avec charges)
+            const currentTotalSalary = currentNetSalary * (1 + CHARGES_RATE);
+
+            // Application du pourcentage au salaire total
+            const newTotalSalary = currentTotalSalary * (1 + rateChangePercent / 100);
+
+            // Calcul du nouveau salaire net
+            const adjustedNetSalary = newTotalSalary / (1 + CHARGES_RATE);
+
+            document.getElementById('rateChangePercent').value = rateChangePercent.toFixed(2);
+            document.getElementById('adjustedNetSalary').value = adjustedNetSalary.toFixed(2);
+        }
+
+        // Fonction pour basculer l'affichage des sections
         function toggleContent(buttonId, contentId) {
             const button = document.getElementById(buttonId);
             const content = document.getElementById(contentId);
@@ -552,11 +770,16 @@
             }
         }
 
-        // Écouteurs d'événements pour les champs d'entrée
+        // Écouteurs d'événements pour la calculatrice principale
         document.getElementById('clientAmount').addEventListener('input', calculateValues);
         document.getElementById('profitPercent').addEventListener('input', calculateValues);
 
-        // Écouteurs d'événements pour les boutons collapsibles
+        // Écouteurs d'événements pour la calculatrice d'ajustement
+        document.getElementById('oldRate').addEventListener('input', calculateAdjustment);
+        document.getElementById('newRate').addEventListener('input', calculateAdjustment);
+        document.getElementById('currentNetSalary').addEventListener('input', calculateAdjustment);
+
+        // Écouteurs d'événements pour les boutons
         document.getElementById('explanationBtn').addEventListener('click', function() {
             toggleContent('explanationBtn', 'explanationContent');
         });
@@ -567,6 +790,14 @@
 
         document.getElementById('salaireBtn').addEventListener('click', function() {
             toggleContent('salaireBtn', 'salaireContent');
+        });
+
+        document.getElementById('adjustmentBtn').addEventListener('click', function() {
+            toggleContent('adjustmentBtn', 'adjustmentContent');
+        });
+
+        document.getElementById('adjustmentExplanationBtn').addEventListener('click', function() {
+            toggleContent('adjustmentExplanationBtn', 'adjustmentExplanationContent');
         });
 
         // Calcul initial
